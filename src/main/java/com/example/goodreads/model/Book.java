@@ -1,10 +1,25 @@
 package com.example.goodreads.model;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "book")
 public class Book {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "imageurl")
     private String imageUrl;
 
+    public Book() {}
+    
     public Book(int id, String name, String imageUrl) {
         this.id = id;
         this.name = name;
