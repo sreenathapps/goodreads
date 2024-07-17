@@ -3,7 +3,9 @@ package com.example.goodreads.service;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.goodreads.model.Book;
 import com.example.goodreads.repository.BookJpaRepository;
@@ -24,26 +26,45 @@ public class BookJPAService implements BookRepository {
 
     @Override
     public Book getBookById(int bookId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBookById'");
+       try {
+        Book book = bookJpaRepository.findById(bookId).get();
+        return book;
+       } catch (Exception e) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+       }
     }
 
     @Override
     public Book addBook(Book book) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addBook'");
+        return bookJpaRepository.save(book);
     }
 
     @Override
     public Book updateBook(int bookId, Book book) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateBook'");
+        try {
+            Book newBook = bookJpaRepository.findById(bookId).get();
+            if (book.getName()!= null) {
+                newBook.setName(book.getName());
+            }
+            if (book.getImageUrl() != null) {
+                newBook.setImageUrl(book.getImageUrl());
+            }
+            bookJpaRepository.save(newBook);
+
+            return newBook;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
     public void deleteBook(int bookId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteBook'");
+        try {
+            bookJpaRepository.deleteById(bookId);
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
     
 }
