@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import com.example.goodreads.model.Author;
 import com.example.goodreads.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 class BookController {
@@ -29,6 +32,12 @@ class BookController {
     public Book getBookById(@PathVariable("bookId") int bookId) {
         return bookService.getBookById(bookId);
     }
+
+    @GetMapping("/books/{bookId}/authors")
+    public List<Author> getBookAuthors(@PathVariable("bookId") int bookId) {
+        return bookService.getBookAuthors(bookId);
+    }
+    
 
     @PostMapping("/publishers/books")
     public Book addBook(@RequestBody Book book) {

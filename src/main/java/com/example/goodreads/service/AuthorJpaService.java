@@ -1,8 +1,11 @@
 package com.example.goodreads.service;
 
 import com.example.goodreads.model.Author;
+import com.example.goodreads.model.Book;
 import com.example.goodreads.repository.AuthorJpaRepository;
 import com.example.goodreads.repository.AuthorRepository;
+import com.example.goodreads.repository.BookJpaRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,8 @@ public class AuthorJpaService implements AuthorRepository {
 
     @Autowired
     private AuthorJpaRepository authorJpaRepository;
+    @Autowired
+    private BookJpaRepository bookJpaRepository;
 
     @Override
     public ArrayList<Author> getAuthors() {
@@ -29,7 +34,7 @@ public class AuthorJpaService implements AuthorRepository {
         try {
             Author author = authorJpaRepository.findById(authorId).get();
             return author;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -42,12 +47,13 @@ public class AuthorJpaService implements AuthorRepository {
 
     @Override
     public Author updateAuthor(int authorId, Author author) {
-        try{
+        try {
             Author new_author = authorJpaRepository.findById(authorId).get();
-            if(author.getAuthorName()!=null)new_author.setAuthorName(author.getAuthorName());
+            if (author.getAuthorName() != null)
+                new_author.setAuthorName(author.getAuthorName());
             authorJpaRepository.save(new_author);
             return new_author;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
@@ -55,6 +61,13 @@ public class AuthorJpaService implements AuthorRepository {
     @Override
     public void deleteAuthor(int authorId) {
         try {
+            Author author = authorJpaRepository.findById(authorId).get();
+            List<Book> books = author.getBooks();
+            for (Book book : books) {
+                book.getAuthors().remove(author);
+            }
+            bookJpaRepository.saveAll(books);
+            
             authorJpaRepository.deleteById(authorId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
